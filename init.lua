@@ -238,6 +238,7 @@ require('lazy').setup({
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   'tpope/vim-surround',
   'tpope/vim-commentary',
+  'sindrets/diffview.nvim',
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
   -- keys can be used to configure plugin behavior/loading/etc.
@@ -245,8 +246,6 @@ require('lazy').setup({
   -- Use `opts = {}` to force a plugin to be loaded.
   --
   --
-  'tpope/vim-surround',
-  'tpope/vim-commentary',
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
   --    require('gitsigns').setup({ ... })
