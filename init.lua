@@ -191,7 +191,18 @@ require('lazy').setup({
     lazy = false,
     ---@module "neo-tree"
     ---@type neotree.Config?
-    opts = {},
+    opts = {
+      event_handlers = {
+        {
+          event = "neo_tree_buffer_enter",
+          handler = function(arg)
+            vim.cmd([[
+              setlocal relativenumber
+              ]])
+          end,
+        },
+      },
+    },
     vim.keymap.set('n', '<leader>e', '<Cmd>Neotree reveal toggle<CR>'),
   },
 
