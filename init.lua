@@ -152,8 +152,10 @@ require('lazy').setup({
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   'tpope/vim-surround',
   'tpope/vim-commentary',
+  'tpope/vim-fugitive',
   'nvim-tree/nvim-web-devicons',
   'sindrets/diffview.nvim',
+  's1n7ax/nvim-window-picker',
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
   -- keys can be used to configure plugin behavior/loading/etc.
