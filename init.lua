@@ -93,6 +93,9 @@ end
 
 vim.api.nvim_set_keymap('n', '<leader>t', ':lua switch_between_file_and_spec()<CR>', { noremap = true, silent = true })
 
+vim.api.nvim_set_keymap('n', '<leader>vp', ':VimuxPromptCommand<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>vl', ':VimuxRunLastCommand<CR>', { noremap = true, silent = true })
+
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -168,6 +171,8 @@ require('lazy').setup({
   'tpope/vim-surround',
   'tpope/vim-commentary',
   'tpope/vim-fugitive',
+  'tpope/vim-rhubarb',
+  'preservim/vimux',
   'nvim-tree/nvim-web-devicons',
   'sindrets/diffview.nvim',
   's1n7ax/nvim-window-picker',
@@ -454,6 +459,7 @@ require('lazy').setup({
     opts = {
       servers = {
         ruby_lsp = {
+          -- cmd = { 'mise', 'exec', '--', 'ruby-lsp' },
           init_options = {
             addonSettings = {
               ['Ruby LSP Rails'] = {
