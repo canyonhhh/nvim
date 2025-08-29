@@ -95,6 +95,9 @@ vim.api.nvim_set_keymap('n', '<leader>t', ':lua switch_between_file_and_spec()<C
 
 vim.api.nvim_set_keymap('n', '<leader>vp', ':VimuxPromptCommand<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>vl', ':VimuxRunLastCommand<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>vi', ':VimuxInspectRunner<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>gb', ':GBrowse<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>gl', ':Git blame<CR>', { noremap = true, silent = true })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -172,10 +175,12 @@ require('lazy').setup({
   'tpope/vim-commentary',
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
+  'AndrewRadev/splitjoin.vim',
   'preservim/vimux',
   'nvim-tree/nvim-web-devicons',
   'sindrets/diffview.nvim',
   's1n7ax/nvim-window-picker',
+  'JonasGavenavicius/codeowners.nvim',
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
   -- keys can be used to configure plugin behavior/loading/etc.
@@ -806,8 +811,15 @@ require('lazy').setup({
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'tokyonight-storm'
 
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'ruby',
+        callback = function()
+          -- Set the background of comments to bright red only in Ruby files
+          vim.cmd.hi 'Comment guibg=#ff0000 ctermbg=Red'
+          vim.cmd.hi 'Comment guifg=#ffffff ctermfg=White'
+        end,
+      })
+
     end,
   },
 
@@ -817,38 +829,43 @@ require('lazy').setup({
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
-      -- Better Around/Inside textobjects
-      --
-      -- Examples:
-      --  - va)  - [V]isually select [A]round [)]paren
-      --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
-      --  - ci'  - [C]hange [I]nside [']quote
       require('mini.ai').setup { n_lines = 500 }
-
-      -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
-      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-      -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
-      -- Simple and easy statusline.
-      --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
       local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
       statusline.setup { use_icons = vim.g.have_nerd_font }
 
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
+      local function section_codeowners()
+        return require('codeowners').codeowners():sub(6)
+      end
+
+      statusline.active = function()
+        local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 120 })
+        local git           = MiniStatusline.section_git({ trunc_width = 40 })
+        local diff          = MiniStatusline.section_diff({ trunc_width = 75 })
+        local diagnostics   = MiniStatusline.section_diagnostics({ trunc_width = 75 })
+        local lsp           = MiniStatusline.section_lsp({ trunc_width = 75 })
+        local filename      = MiniStatusline.section_filename({ trunc_width = 140 })
+        local fileinfo      = MiniStatusline.section_fileinfo({ trunc_width = 120 })
+        local location      = MiniStatusline.section_location({ trunc_width = 75 })
+        local search        = MiniStatusline.section_searchcount({ trunc_width = 75 })
+        local owners        = section_codeowners({ trunc_width = 100 })
+
+        return MiniStatusline.combine_groups({
+          { hl = mode_hl,                  strings = { mode } },
+          { hl = 'MiniStatuslineDevinfo',  strings = { git, diff, diagnostics, lsp } },
+          '%<',
+          { hl = 'MiniStatuslineFilename', strings = { filename } },
+          '%=',
+          { hl = 'MiniStatuslineExtra',    strings = { owners } },
+          { hl = 'MiniStatuslineFileinfo', strings = { fileinfo } },
+          { hl = mode_hl,                  strings = { search, location } },
+        })
+      end
+
       statusline.section_location = function()
         return '%2l:%-2v'
       end
-
-      -- ... and there is more!
-      --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
   { -- Highlight, edit, and navigate code
