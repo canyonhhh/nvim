@@ -96,8 +96,10 @@ vim.api.nvim_set_keymap('n', '<leader>t', ':lua switch_between_file_and_spec()<C
 vim.api.nvim_set_keymap('n', '<leader>vp', ':VimuxPromptCommand<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>vl', ':VimuxRunLastCommand<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>vi', ':VimuxInspectRunner<CR>', { noremap = true, silent = true })
+
 vim.api.nvim_set_keymap('n', '<leader>gb', ':GBrowse<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>gl', ':Git blame<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>gg', ':Git<CR><C-w>25-', { noremap = true, silent = true })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -192,6 +194,13 @@ require('lazy').setup({
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
   --    require('gitsigns').setup({ ... })
   --
+  {
+    "vinnymeller/swagger-preview.nvim",
+    cmd = { "SwaggerPreview", "SwaggerPreviewStop", "SwaggerPreviewToggle" },
+    build = "npm i",
+    config = true,
+  },
+
   -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -225,6 +234,23 @@ require('lazy').setup({
               setlocal relativenumber
               ]])
           end,
+        },
+      },
+      window = {
+        auto_expand_width = true,
+      },
+      default_component_configs = {
+        file_size = {
+          enabled = false,
+        },
+        type = {
+          enabled = false,
+        },
+        last_modified = {
+          enabled = false,
+        },
+        created = {
+          enabled = false,
         },
       },
     },
